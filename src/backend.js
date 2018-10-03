@@ -1,53 +1,59 @@
 export function Sudoku(matrix) {
-  this.goodArr = [1,2,3,4,5,6,7,8,9];
 
   this.matrix = matrix;
 
-  this.rows = function() {
-    let rowArr = [];
-    let row = [];
-    for (let i = 0; i < 9; i++) {
-      for (let j = 0; j < 0; j++) {
-        row.push(matrix[i][j]);
-      }
-      rowArr.push(row);
-    }
-    return rowArr;
-  };
+  // This method is redundant, creates an exact copy of matrix, we can just run the solutionCheck() method on matrix without creating this.rows().
+  this.rows = this.getRows();
 
-  this.cols = function() {
-    let colArr = [];
-    let col = [];
-    for (let j = 0; j < 9; j++) {
-      for (let i = 0; i < 9; i++) {
-        col.push(matrix[i][j]);
-      }
-      colArr.push(col);
-    }
-    return colArr;
-  };
+  this.cols = this.getCols();
 
-  this.boxes = function() {
-    let boxArr = [];
-    let box = [];
-    let loop = function(starti, startj) {
-      let box = [];
-      for (let i = starti; i < starti + 3; i++) {
-        for (let j = startj; j < startj + 3; j++) {
-          box.push(matrix[i][j]);
-        }
-      }
-      return box;
-    }
-    for (let k = 0; k < 9; k = k + 3 ) {
-      for (let l = 0; l < 9; l = l + 3) {
-        box = loop(k, l);
-        boxArr.push(box);
-      }
-    }
-    return boxArr;
-  };
+  this.boxes = this.getBoxes();
+
 }
+
+Sudoku.prototype.getRows = function() {
+  let rowArr = [];
+  for (let i = 0; i < 9; i++) {
+    let row = [];
+    for (let j = 0; j < 9; j++) {
+      row.push(this.matrix[i][j]);
+    }
+    rowArr.push(row);
+  }
+  return rowArr;
+};
+
+Sudoku.prototype.getCols = function() {
+  let colArr = [];
+  for (let j = 0; j < 9; j++) {
+    let col = [];
+    for (let i = 0; i < 9; i++) {
+      col.push(this.matrix[i][j]);
+    }
+    colArr.push(col);
+  }
+  return colArr;
+};
+
+Sudoku.prototype.getBoxes = function() {
+  let boxArr = [];
+  let loop = (starti, startj) => {
+    let box = [];
+    for (let i = starti; i < starti + 3; i++) {
+      for (let j = startj; j < startj + 3; j++) {
+        box.push(this.matrix[i][j]);
+      }
+    }
+    return box;
+  }
+  for (let k = 0; k < 9; k = k + 3 ) {
+    for (let l = 0; l < 9; l = l + 3) {
+      let box = loop(k, l);
+      boxArr.push(box);
+    }
+  }
+  return boxArr;
+};
 
 Sudoku.prototype.entryCount = function() {
   let out = true;
@@ -82,16 +88,17 @@ Sudoku.prototype.entryCheck = function() {
 };
 
 Sudoku.prototype.arrCheck = function(arr) {
+  const goodArr = [1,2,3,4,5,6,7,8,9];
   let out = true;
   let sorted = [];
   arr.forEach(function(elt) {
     sorted.push(elt);
   })
   sorted.sort(function(a,b) {
-    return b - a;
+    return a - b;
   });
   sorted.forEach(function(elt,i) {
-    if (elt != this.goodArr[i]) {
+    if (elt !== goodArr[i]) {
       out = false;
     }
   })
@@ -99,20 +106,21 @@ Sudoku.prototype.arrCheck = function(arr) {
 };
 
 Sudoku.prototype.solutionCheck = function() {
-  this.rows.forEach(function(arr) {
-    if (!this.arrCheck(arr)) {
-      return false;
+  let out = true;
+  this.rows.forEach(arr => {
+    if (this.arrCheck(arr) == false) {
+      out = false;
     }
-  })
-  this.cols.forEach(function(arr) {
-    if (!this.arrCheck(arr)) {
-      return false;
+  });
+  this.cols.forEach(arr => {
+    if (this.arrCheck(arr) == false) {
+      out = false
     }
-  })
-  this.boxes.forEach(function(arr) {
-    if (!this.arrCheck(arr)) {
-      return false;
+  });
+  this.boxes.forEach(arr => {
+    if (this.arrCheck(arr) == false) {
+      out = false;
     }
-  })
-  return true;
+  });
+  return out;
 };

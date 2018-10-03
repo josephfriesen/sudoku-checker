@@ -1,66 +1,14 @@
 import { Sudoku } from './../src/backend.js';
+import { matrix, matrixNotEnoughEntries, matrixContainsGarbage, matrixOutOfRange, matrixNotASolution } from './../src/constants.js';
 
 describe('Sudoku object and associated prototypes', function() {
 
   let sudokuTestObj;
-  const matrix = [
-    [5,3,4,6,7,8,9,1,2],
-    [6,7,2,1,9,5,3,4,8],
-    [1,9,8,3,4,2,5,6,7],
-    [8,5,9,7,6,1,4,2,3],
-    [4,2,6,8,5,3,7,9,1],
-    [7,1,3,9,2,4,8,5,6],
-    [9,6,1,5,3,7,2,8,4],
-    [2,8,7,4,1,9,6,3,5],
-    [3,4,5,2,8,6,1,7,9]
-  ];
-  const matrixNotEnoughEntries = [
-    [5,3,4,6,7,8,9,1],
-    [6,7,2,1,9,5,3,4,8],
-    [1,9,8,3,4,2,5,6,7],
-    [8,5,9,7,6,1,4,2,3],
-    [4,2,6,8,5,3,7,9,1],
-    [7,1,3,9,2,4,8,5,6],
-    [9,6,1,5,3,7,2,8,4],
-    [2,8,7,4,1,9,6,3,5],
-    [3,4,5,2,8,6,1,7,9]
-  ];
-  const matrixContainsGarbage = [
-    [5,3,4,6,7,"hi",9,1,2],
-    [6,7,2,1,9,5,3,4,8],
-    [1,9,8,3,4,2,5,6,7],
-    [8,5,9,7,6,1,4,2,3],
-    [4,2,6,8,5,3,7,9,1],
-    [7,1,3,9,2,4,8,5,6],
-    [9,6,1,5,3,7,2,8,4],
-    [2,8,7,4,1,9,6,3,5],
-    [3,4,5,2,8,6,1,7,9]
-  ];
-  const matrixOutOfRange = [
-    [5,3,4,6,7,8,9,1,2],
-    [6,7,2,1,9,5,3,4,8],
-    [1,9,8,3,4,2,5,6,7],
-    [8,5,9,7,6,1,4,2,3],
-    [4,2,6,8,5,3,7,87,1],
-    [7,1,3,9,2,4,8,5,6],
-    [9,6,1,5,3,7,2,8,4],
-    [2,8,7,4,1,9,6,3,5],
-    [3,4,5,2,8,6,1,7,9]
-  ];
-  const matrixNotASolution = [
-    [5,3,4,6,7,8,9,1,2],
-    [6,7,2,1,9,5,3,4,8],
-    [1,9,8,3,4,2,5,6,7],
-    [8,5,1,7,6,9,4,2,3],
-    [4,2,6,8,5,3,7,9,1],
-    [7,1,3,9,2,4,8,5,6],
-    [9,6,1,5,3,7,2,8,4],
-    [2,8,7,4,1,9,6,3,5],
-    [3,4,5,2,8,6,1,7,9]
-  ];
+  let rand;
 
   beforeEach(function() {
     sudokuTestObj = new Sudoku(matrix);
+    rand = Math.floor(Math.random()*9);
   });
 
   it('should test all entries of a given matrix and determine if they are all integers', function() {
@@ -80,6 +28,52 @@ describe('Sudoku object and associated prototypes', function() {
     let sudokuGarbage = new Sudoku(matrixContainsGarbage);
     expect(sudokuOutOfRange.entryCheck()).toContain("not between 1 and 9");
     expect(sudokuTestObj.entryCheck()).toEqual("Good");
+  });
+
+  it('should test that rows of matrix match rows of object.rows.', function() {
+    expect(sudokuTestObj.matrix[rand]).toEqual(sudokuTestObj.rows[rand]);
+  });
+
+  it('should test that columns of matrix match columns of .cols()', function() {
+    let col = [];
+    for (var i = 0; i < 9; i++) {
+      col.push(matrix[i][rand]);
+    }
+    expect(col).toEqual(sudokuTestObj.cols[rand]);
+  });
+
+  it('should test that 3x3 boxes of matrix match boxes of .boxes()', function() {
+    let n = Math.floor(Math.random()*3);
+    let m = Math.floor(Math.random()*3);
+    // console.log("karma is updating, i think?");
+    let getBox;
+    if (n == 0) {
+      getBox = sudokuTestObj.boxes[m];
+    }
+    else if (n == 1) {
+      getBox = sudokuTestObj.boxes[m+3];
+    }
+    else if (n == 2) {
+      getBox = sudokuTestObj.boxes[m+6];
+    }
+    expect(sudokuTestObj.matrix[3*n][3*m]).toEqual(getBox[0]);
+    expect(sudokuTestObj.matrix[3*n+1][3*m+1]).toEqual(getBox[4]);
+    expect(sudokuTestObj.matrix[3*n+2][3*m+2]).toEqual(getBox[8]);
+  });
+
+  it('should test an array, return true if that array is a permutation of 1,2, ... 9, and return false if not.', function() {
+    let good = [4,2,1,7,5,9,3,6,8];
+    let bad = [1,4,8,3,7,3,9,2,5];
+    good = sudokuTestObj.arrCheck(good);
+    bad = sudokuTestObj.arrCheck(bad);
+    expect(bad).toBe(false);
+    expect(good).toBe(true);
+  });
+
+  it('should test that all possible arrays are valid permutations of 1 through 9, and return false if not.', function() {
+    let bad = new Sudoku(matrixNotASolution);
+    expect(sudokuTestObj.solutionCheck()).toBe(true);
+    expect(bad.solutionCheck()).toBe(false);
   });
 
 });

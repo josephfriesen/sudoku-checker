@@ -1,0 +1,35 @@
+.sudoku-container {
+  border: 3px solid black;
+  width: 900px;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  border: 1px dotted grey;
+}
+
+.sudoku-box {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.clue {
+  color: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.user-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
