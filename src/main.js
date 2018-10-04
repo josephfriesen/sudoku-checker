@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 import './scss/styles.scss';
 import { matrix, puzzle } from './constants.js';
+import { Sudoku } from './backend.js';
 
 
 $(document).ready(function() {
@@ -26,14 +27,14 @@ $(document).ready(function() {
         $(coord).click(function() {
           $(coord).toggleClass("active");
           $(".entry").toggleClass("hidden");
-          $(".entry").html("<label for='user-num'>Please enter a number between 1 and 9 to enter in cell (" + coord[1] + ", " + coord[2] + "):  <input type='text' id='user-num'><button type='button' class='btn " + coord[1] + coord[2] + "'>Click</button");
+          $(".entry").html("<label for='user-num'>Please enter a number between 1 and 9 to enter in cell (" + coord[1] + ", " + coord[2] + "):  <input type='text' id='user-num'> <button type='button' id='entry-button' class='btn btn-dark " + coord[1] + coord[2] + "'>Click</button");
           $(`button${coord}`).click(function() {
             let userInput = parseInt($("#user-num").val());
             $("#user-num").val("");
             userPuzzle[coord[1]][coord[2]] = userInput;
             $(numclass).text(userInput);
-            $(coord).toggleClass("active");
             $(".entry").toggleClass("hidden");
+            $(".active").toggleClass("active");
           });
         });
       }
@@ -43,4 +44,9 @@ $(document).ready(function() {
       }
     }
   }
+
+  $("#submit-button").click(function() {
+    let UserSudoku = new Sudoku(userPuzzle);
+    console.log(UserSudoku);
+  })
 });

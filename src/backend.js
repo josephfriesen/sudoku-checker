@@ -57,14 +57,15 @@ Sudoku.prototype.getBoxes = function() {
 
 Sudoku.prototype.entryCount = function() {
   let out = true;
-  if (this.matrix.length != 9) {
-    out = false;
-  }
-  this.matrix.forEach(function(row) {
-    if (row.length != 9) {
-      out = false;
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (this.matrix[i][j] == 0) {
+        out = false;
+      } else if (this.matrix[i][j].isNaN()) {
+        out = false;
+      }
     }
-  })
+  }
   if (out) {
     return "Good";
   }
