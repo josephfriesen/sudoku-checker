@@ -1,3 +1,5 @@
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 import './scss/styles.scss';
 import { matrix, puzzle } from './constants.js';
@@ -12,29 +14,32 @@ $(document).ready(function() {
     }
     userPuzzle.push(row);
   }
-  console.log(userPuzzle);
 
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       const coord = `.${i}${j}`;
+      const num = `num-${i}${j}`;
+      const numclass = `.${num}`;
+      $(coord).html(`<div class='location'>(${coord[1]}, ${coord[2]})</div><div class='${num}'</div>`);
       if (userPuzzle[coord[1]][coord[2]] == 0) {
+        $(coord).addClass("user-input");
         $(coord).click(function() {
-          console.log(coord);
+          $(coord).toggleClass("active");
           $(".entry").toggleClass("hidden");
-          $("#enter-value-button").click(function() {
+          $(".entry").html("<label for='user-num'>Please enter a number between 1 and 9 to enter in cell (" + coord[1] + ", " + coord[2] + "):  <input type='text' id='user-num'><button type='button' class='btn " + coord[1] + coord[2] + "'>Click</button");
+          $(`button${coord}`).click(function() {
             let userInput = parseInt($("#user-num").val());
-            console.log(userInput);
             $("#user-num").val("");
             userPuzzle[coord[1]][coord[2]] = userInput;
-            $(coord).text(userInput);
-            $(coord).toggleClass("user-input");
+            $(numclass).text(userInput);
+            $(coord).toggleClass("active");
             $(".entry").toggleClass("hidden");
           });
         });
       }
       else {
-        $(coord).text(userPuzzle[coord[1]][coord[2]]);
-        $(coord).toggleClass("clue");
+        $(coord).html("<div class='location'>(" + coord[1] + ",  " + coord[2] + ")</div>" + userPuzzle[coord[1]][coord[2]]);
+        $(coord).addClass("clue");
       }
     }
   }
